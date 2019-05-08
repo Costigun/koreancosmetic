@@ -19,11 +19,13 @@ class Products(models.Model):
     description = models.TextField(verbose_name='Описание')
     attributes = models.ManyToManyField('Attributes',verbose_name='Аттрибуты',
                                   related_name='attributes')
-    price = models.DecimalField(max_digits=8,decimal_places=2)
+    price = models.DecimalField(max_digits=8,decimal_places=2,verbose_name='Цена')
+    price_notseil = models.DecimalField(max_digits=8,decimal_places=2,verbose_name='Цена без скидки',blank=True)
     isAvailable = models.CharField(verbose_name='Наличие на складе',choices=status,max_length=20)
+    seil = models.BooleanField(blank=True,verbose_name='Скидка')
 
     class Meta:
-        verbose_name = 'Product'
+        verbose_name = 'Products'
         verbose_name_plural = 'Продукт'
 
     def __str__(self):
