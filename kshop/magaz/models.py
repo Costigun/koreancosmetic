@@ -1,12 +1,22 @@
+from datetime import timezone
+from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 
 # Create your models here.
+from django.db.models import Sum, F, IntegerField
+
 yes = 'В наличии'
 no = 'Нет в наличии'
 
 status = (
     (yes,'В наличии'),
     (no,'Нет в наличии'),
+)
+obrabotan = 'Обработан'
+inProgress = 'В процессе'
+bill = (
+    (obrabotan, 'Обработан'),
+    (inProgress, 'В процессе'),
 )
 
 
@@ -51,15 +61,30 @@ class Attributes(models.Model):
     def __str__(self):
         return self.name
 
-
     class Meta:
         verbose_name = 'Attributes'
         verbose_name_plural = 'Характеристики'
 
 
+class Order(models.Model):
+    product = models.ManyToManyField(Products,verbose_name='Товары',related_name='product')
+    dostavka = models.BooleanField(verbose_name='Доставка',default=True)
+    pub_date = models.DateTimeField(auto_now=False,auto_now_add=True)
+    user = models.EmailField(verbose_name='E-mail')
+    phone = PhoneNumberField(verbose_name='Телефон',blank=True)
+
+    def __str__(self):
+        return self.user
+
+    class Meta:
+        verbose_name = 'Orders'
+        verbose_name_plural = 'Заказы'
+
+
 class Bill(models.Model):
-    product_id = models.ManyToManyField(Products,verbose_name='id товара')
-    totalsum = models.DecimalField(max_digits=10,decimal_places=2)
+    order_id = models.ForeignKey(Order,on_delete=models.CASCADE,verbose_name='ID заказа')
+    date = models.DateTimeField(auto_now=False,auto_now_add=True)
+    status = models.CharField(verbose_name='Статус',choices=bill,default=obrabotan,max_length=50)
 
     class Meta:
         verbose_name = 'Bill'

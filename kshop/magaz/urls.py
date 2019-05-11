@@ -20,10 +20,11 @@ e_router=ExtendedSimpleRouter()
 router = routers.DefaultRouter()
 router.register(r'available', views.ProductIsAvailable)
 router.register(r'seil',views.ProductSeil)
+router.register(r'product',views.ProductSum)
 
 
 urlpatterns = [
     url(r'^',include(router.urls)),
     url(r'^',include(e_router.urls)),
-    url(r'product',ProductSum.as_view()),
+    url(r'order', OrderAPIView.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
