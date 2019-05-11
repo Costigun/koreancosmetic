@@ -50,4 +50,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ('id','product','dostavka','pub_date','phone','user')
 
 
-
+class BillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bill
+        fields = ('__all__')

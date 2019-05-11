@@ -85,3 +85,5 @@ class OrderAPIView(APIView):
             return Response(data, status=status.HTTP_201_CREATED)
 
 class BillAPIView(APIView):
+    queryset = Bill.objects.all()
+    seralizer_class = BillSerializer

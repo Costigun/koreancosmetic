@@ -27,4 +27,5 @@ urlpatterns = [
     url(r'^',include(router.urls)),
     url(r'^',include(e_router.urls)),
     url(r'order', OrderAPIView.as_view()),
+    url(r'bill', BillAPIView.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
