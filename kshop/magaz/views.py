@@ -13,6 +13,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum
 from rest_framework import status
 # Create your views here.
+from rest_framework_extensions.mixins import NestedViewSetMixin
 from django.core.mail import send_mail, EmailMessage
 from .methods import send_email_gmail
 
@@ -22,12 +23,8 @@ class CategoryView(ReadOnlyModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
 
-    def list(self, request, *args, **kwargs):
-        self.serializer_class = CategorySerializer
-        return super().list(request,*args,**kwargs)
 
-
-class ProductFilterView(ReadOnlyModelViewSet):
+class ProductFilterView(NestedViewSetMixin,ReadOnlyModelViewSet):
     queryset = Products.objects.all()
     serializer_class = ProductListSerializer
     filter_backends = (filters.OrderingFilter,filters.SearchFilter,)
@@ -37,12 +34,7 @@ class ProductFilterView(ReadOnlyModelViewSet):
 
 class ProductSum(viewsets.ModelViewSet):
     queryset = Products.objects.all()
-    serializer_class = ProductSerializer
-
-    def get_queryset(self):
-        return Products.objects.annotate(
-            totalsum = Sum('price'),
-        )
+    serializer_class = ProductSumSerialzier
 
 
 class ProductIsAvailable(ReadOnlyModelViewSet):
