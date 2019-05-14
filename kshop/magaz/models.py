@@ -31,6 +31,7 @@ class Products(models.Model):
                                   related_name='attributes')
     price = models.DecimalField(max_digits=8,decimal_places=2,verbose_name='Цена')
     price_notseil = models.DecimalField(max_digits=8,decimal_places=2,verbose_name='Цена без скидки',blank=True)
+    col = models.IntegerField(verbose_name='Количество',help_text='НЕ ТРОГАТЬ!',default=1)
     isAvailable = models.CharField(verbose_name='Наличие на складе',choices=status,max_length=20)
     seil = models.BooleanField(blank=True,verbose_name='Скидка')
 
@@ -44,7 +45,7 @@ class Products(models.Model):
 
 class Category(models.Model):
     name = models.CharField(verbose_name='Название',max_length=100)
-    products = models.ManyToManyField(Products,verbose_name='Товар',related_name='products')
+    products = models.ManyToManyField(Products,verbose_name='Товар',related_name='category_products')
 
 
     class Meta:

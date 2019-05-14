@@ -17,37 +17,43 @@ class ProductListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Products
-        fields = ('id', 'name', 'description', 'price', 'price_notseil', 'isAvailable', 'seil', 'attributes')
+        fields = ('id', 'name', 'description', 'price', 'price_notseil', 'isAvailable', 'seil', 'attributes','col')
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    totalsum = serializers.IntegerField()
 
+class ProductSumSerialzier(serializers.ModelSerializer):
     class Meta:
         model = Products
-        fields = ('id', 'name', 'description', 'price', 'totalsum')
+        fields = ('id', 'name', 'description', 'price', 'col')
 
 
 class CategoryListSerializer(serializers.ModelSerializer):
-    products = ProductListSerializer(many=True)
-
     class Meta:
         model = Products
-        fields = ('id', 'name', 'products')
-
-
-class CategorySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Category
-        fields = ('id', 'name',)
+        fields = ('id', 'name')
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    product = serializers.StringRelatedField()
+    totalsum = SerializerMethodField()
 
     class Meta:
         model = Order
-        fields = ('id','product','dostavka','pub_date','phone','user')
+        fields = ('id','dostavka','pub_date','phone','user', 'totalsum', 'product')
+
+    def get_totalsum(self,obj):
+        id_list = [1,2,3,4,5,6,7,8,9]
+        productid = Products.objects.filter(id__in=id_list)
+        totalsum = 0
+        for count in productid:
+            totalsum += (count.col * count.price)
+        return totalsum
+
+    def create(self, validated_data):
+        product = validated_data.pop('product')
+        ProductsToOrder = Order.objects.create(product=product)
+        return ProductsToOrder
+        # return Products.objects.create(**validated_data)
 
 
 class BillSerializer(serializers.ModelSerializer):
