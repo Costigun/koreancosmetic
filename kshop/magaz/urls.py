@@ -19,7 +19,7 @@ e_router=ExtendedSimpleRouter()
 
 router = routers.DefaultRouter()
 router.register(r'available', views.ProductIsAvailable)
-router.register(r'seil',views.ProductSeil)
+router.register(r'seil', views.ProductSeil)
 router.register(r'product',views.ProductSum)
 
 

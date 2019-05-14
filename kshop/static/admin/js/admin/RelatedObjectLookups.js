@@ -32,7 +32,8 @@
                 href += '&_popup=1';
             }
         }
-        var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+        // GRAPPELLI CUSTOM: changed width
+        var win = window.open(href, name, 'height=500,width=1000,resizable=yes,scrollbars=yes');
         win.focus();
         return false;
     }
@@ -49,6 +50,8 @@
         } else {
             document.getElementById(name).value = chosenId;
         }
+        // GRAPPELLI CUSTOM: element focus
+        elem.focus();
         win.close();
     }
 
@@ -58,7 +61,7 @@
 
     function updateRelatedObjectLinks(triggeringLink) {
         var $this = $(triggeringLink);
-        var siblings = $this.nextAll('.view-related, .change-related, .delete-related');
+        var siblings = $this.nextAll().find('.change-related, .delete-related');
         if (!siblings.length) {
             return;
         }
@@ -86,6 +89,8 @@
                 } else {
                     elem.value = newId;
                 }
+                // GRAPPELLI CUSTOM: element focus
+                elem.focus();
             }
             // Trigger a change event to update related links if required.
             $(elem).trigger('change');
@@ -99,6 +104,8 @@
     }
 
     function dismissChangeRelatedObjectPopup(win, objId, newRepr, newId) {
+        var name = windowname_to_id(win.name);
+        var elem = document.getElementById(name);
         var id = windowname_to_id(win.name).replace(/^edit_/, '');
         var selectsSelector = interpolate('#%s, #%s_from, #%s_to', [id, id, id]);
         var selects = $(selectsSelector);
@@ -108,12 +115,8 @@
                 this.value = newId;
             }
         });
-        selects.next().find('.select2-selection__rendered').each(function() {
-            // The element can have a clear button as a child.
-            // Use the lastChild to modify only the displayed value.
-            this.lastChild.textContent = newRepr;
-            this.title = newRepr;
-        });
+        // GRAPPELLI CUSTOM: element focus
+        elem.focus();
         win.close();
     }
 
@@ -126,8 +129,19 @@
                 $(this).remove();
             }
         }).trigger('change');
+        // GRAPPELLI CUSTOM: element focus
+        elem.focus();
         win.close();
     }
+
+    // GRAPPELLI CUSTOM
+    function removeRelatedObject(triggeringLink) {
+        var id = triggeringLink.id.replace(/^remove_/, '');
+        var elem = document.getElementById(id);
+        elem.value = "";
+        elem.focus();
+    }
+    window.removeRelatedObject = removeRelatedObject;
 
     // Global for testing purposes
     window.id_to_windowname = id_to_windowname;
@@ -146,7 +160,7 @@
     window.dismissAddAnotherPopup = dismissAddRelatedObjectPopup;
 
     $(document).ready(function() {
-        $("a[data-popup-opener]").on('click', function(event) {
+        $("a[data-popup-opener]").click(function(event) {
             event.preventDefault();
             opener.dismissRelatedLookupPopup(window, $(this).data("popup-opener"));
         });
@@ -167,8 +181,11 @@
                 updateRelatedObjectLinks(this);
             }
         });
-        $('.related-widget-wrapper select').trigger('change');
-        $('body').on('click', '.related-lookup', function(e) {
+        // GRAPPELLI CUSTOM
+        /* triggering select means that update_lookup is triggered with
+        generic autocompleted (which would empty the field) */
+        $('.grp-related-widget-tools').parent().children('select:first-child').trigger('change');
+        $('.related-lookup').click(function(e) {
             e.preventDefault();
             var event = $.Event('django:lookup-related');
             $(this).trigger(event);
@@ -178,4 +195,4 @@
         });
     });
 
-})(django.jQuery);
+})(grp.jQuery);

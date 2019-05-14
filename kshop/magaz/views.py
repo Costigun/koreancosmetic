@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework import filters, viewsets, request
-
+from rest_framework import generics
 from kshop import settings
 from .models import *
 from .serializers import *
@@ -46,7 +46,7 @@ class ProductSum(viewsets.ModelViewSet):
 
 
 class ProductIsAvailable(ReadOnlyModelViewSet):
-    queryset = Products.objects.all().filter(isAvailable=yes)
+    queryset = Products.objects.filter(isAvailable=yes)
     serializer_class = ProductListSerializer
 
 
@@ -84,6 +84,7 @@ class OrderAPIView(APIView):
             send_email_gmail(user=user, product=product, dostavka=dostavka, phone=phone)
             return Response(data, status=status.HTTP_201_CREATED)
 
-class BillAPIView(APIView):
+
+class BillAPIView(generics.ListAPIView):
     queryset = Bill.objects.all()
-    seralizer_class = BillSerializer
+    serializer_class = BillSerializer
