@@ -34,7 +34,6 @@ class CategoryListSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    product = serializers.StringRelatedField()
     totalsum = SerializerMethodField()
 
     class Meta:
@@ -49,14 +48,9 @@ class OrderSerializer(serializers.ModelSerializer):
             totalsum += (count.col * count.price)
         return totalsum
 
-    def create(self, validated_data):
-        product = validated_data.pop('product')
-        ProductsToOrder = Order.objects.create(product=product)
-        return ProductsToOrder
-        # return Products.objects.create(**validated_data)
-
 
 class BillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bill
         fields = ('__all__')
+

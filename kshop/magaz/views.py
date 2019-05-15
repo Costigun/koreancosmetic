@@ -51,6 +51,7 @@ class OrderAPIView(APIView):
 
     def post(self, request):
         try:
+            id = request.data['id']
             product = request.data['product']
             dostavka = request.data['dostavka']
             phone = request.data['phone']
@@ -59,21 +60,25 @@ class OrderAPIView(APIView):
             return Response({"Test":"Один или нескоолько полей не заполнены"}, status=status.HTTP_400_BAD_REQUEST)
         order_serializer = OrderSerializer(
             data={
+                'id': id,
                 'product': product,
                 'dostavka': dostavka,
                 'phone': phone,
-                'user': user
+                'user': user,
             },
             partial=True
         )
         if order_serializer.is_valid():
             order_serializer.save()
             data = {
+                'orderid': order_serializer.data['id'],
                 'product': order_serializer.data['product'],
                 'dostavka': order_serializer.data['dostavka'],
                 'phone': order_serializer.data['phone'],
+                'totalsum': order_serializer.data['totalsum']
+
             }
-            send_email_gmail(user=user, product=product, dostavka=dostavka, phone=phone)
+            send_email_gmail(user=user, product=product, dostavka=dostavka, phone=phone,orderid=id)
             return Response(data, status=status.HTTP_201_CREATED)
 
 
