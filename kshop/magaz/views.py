@@ -12,10 +12,10 @@ from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum
 from rest_framework import status
-# Create your views here.
 from rest_framework_extensions.mixins import NestedViewSetMixin
 from django.core.mail import send_mail, EmailMessage
 from .methods import send_email_gmail
+
 
 class CategoryView(ReadOnlyModelViewSet):
     queryset = Category.objects.all()
@@ -34,7 +34,7 @@ class ProductFilterView(NestedViewSetMixin,ReadOnlyModelViewSet):
 
 class ProductSum(viewsets.ModelViewSet):
     queryset = Products.objects.all()
-    serializer_class = ProductSumSerialzier
+    serializer_class = ProductListSerializer
 
 
 class ProductIsAvailable(ReadOnlyModelViewSet):
@@ -76,7 +76,6 @@ class OrderAPIView(APIView):
                 'dostavka': order_serializer.data['dostavka'],
                 'phone': order_serializer.data['phone'],
                 'totalsum': order_serializer.data['totalsum']
-
             }
             send_email_gmail(user=user, product=product, dostavka=dostavka, phone=phone,orderid=id)
             return Response(data, status=status.HTTP_201_CREATED)
@@ -85,3 +84,12 @@ class OrderAPIView(APIView):
 class BillAPIView(generics.ListAPIView):
     queryset = Bill.objects.all()
     serializer_class = BillSerializer
+
+
+class BrandView(ReadOnlyModelViewSet):
+    queryset = Brands.objects.all()
+    serializer_class = BrandListSerializer
+
+    def list(self, request, *args, **kwargs):
+        self.serializer_class = BrandSerializer
+        return super( ).list(request, *args, **kwargs)

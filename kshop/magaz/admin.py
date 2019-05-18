@@ -2,9 +2,15 @@ from django.contrib import admin
 from .models import *
 # Register your models here.
 
-admin.site.register(Products)
+
+class ProductsAdmin(admin.ModelAdmin):
+    model = Products
+    list_display = ('name','price','price_notseil','isAvailable','seil')
+
+admin.site.register(Products,ProductsAdmin)
 admin.site.register(Category)
 admin.site.register(Attributes)
+admin.site.register(Brands)
 
 class OrderAdmin(admin.ModelAdmin):
     model = Order
@@ -18,3 +24,4 @@ class ListAdmin(admin.ModelAdmin):
     list_display = ('date', 'status')
 
 admin.site.register(Bill,ListAdmin)
+

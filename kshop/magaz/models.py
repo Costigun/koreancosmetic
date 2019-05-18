@@ -30,7 +30,7 @@ class Products(models.Model):
     attributes = models.ManyToManyField('Attributes',verbose_name='Аттрибуты',
                                   related_name='attributes')
     price = models.DecimalField(max_digits=8,decimal_places=2,verbose_name='Цена')
-    price_notseil = models.DecimalField(max_digits=8,decimal_places=2,verbose_name='Цена без скидки',blank=True)
+    price_notseil = models.DecimalField(max_digits=8,decimal_places=2,verbose_name='Цена без скидки',blank=True,null=True)
     col = models.IntegerField(verbose_name='Количество',help_text='НЕ ТРОГАТЬ!',default=1)
     isAvailable = models.CharField(verbose_name='Наличие на складе',choices=status,max_length=20)
     seil = models.BooleanField(blank=True,verbose_name='Скидка')
@@ -91,3 +91,14 @@ class Bill(models.Model):
         verbose_name = 'Bill'
         verbose_name_plural = 'Чек'
 
+
+class Brands(models.Model):
+    name = models.CharField(verbose_name='Название',max_length=50,help_text='не более 50 символов')
+    description = models.CharField(max_length=150,help_text='не более 150 символов',verbose_name='Описание бренда')
+    products = models.ManyToManyField(Products,related_name='products',verbose_name='Товары')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'Бренды'

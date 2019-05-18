@@ -17,8 +17,8 @@ class ProductListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Products
-        fields = ('id', 'image', 'name', 'description', 'price', 'price_notseil', 'isAvailable', 'seil', 'attributes','col')
-
+        fields = ('id', 'image', 'name', 'description', 'price', 'price_notseil',
+                  'isAvailable', 'seil', 'attributes','col')
 
 
 class ProductSumSerialzier(serializers.ModelSerializer):
@@ -53,4 +53,23 @@ class BillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bill
         fields = ('__all__')
+
+class ProductBrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Products
+        fields = ('id','image','name','price','price_notseil')
+
+
+class BrandListSerializer(serializers.ModelSerializer):
+    products = ProductBrandSerializer(many=True)
+
+    class Meta:
+        model = Brands
+        fields = ('id', 'name', 'description', 'products',)
+
+
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brands
+        fields = ('id','name')
 
