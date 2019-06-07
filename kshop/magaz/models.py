@@ -73,6 +73,11 @@ class Order(models.Model):
     pub_date = models.DateTimeField(auto_now=False,auto_now_add=True)
     user = models.EmailField(verbose_name='E-mail')
     phone = PhoneNumberField(verbose_name='Телефон',blank=True)
+    total = models.FloatField(editable=False, blank=True, default=0,verbose_name='Сумма заказа')
+
+    @property
+    def total(self):
+        return self.product.aggregate(Sum('price'))['price__sum']
 
     def __str__(self):
         return self.user
@@ -102,3 +107,16 @@ class Brands(models.Model):
 
     class Meta:
         verbose_name_plural = 'Бренды'
+
+
+class Picture(models.Model):
+    picture = models.ImageField(upload_to='media/', height_field=None,
+                              width_field=None,
+                              verbose_name='Изображение',
+                              help_text='Не более 1 мб')
+    image_inline = models.ForeignKey(Products, on_delete=models.CASCADE,related_name='image_inline')
+
+    class Meta:
+        verbose_name = 'Picture'
+        verbose_name_plural = 'Картинки'
+

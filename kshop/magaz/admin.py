@@ -2,11 +2,15 @@ from django.contrib import admin
 from .models import *
 # Register your models here.
 
+class PictureInline(admin.TabularInline):
+    model = Picture
+    fields = ('picture',)
 
 class ProductsAdmin(admin.ModelAdmin):
-    model = Products
-    list_display = ('name','price','price_notseil','isAvailable','seil')
+    list_display = ('name', 'price', 'price_notseil', 'isAvailable', 'seil')
+    inlines = [PictureInline, ]
 
+admin.site.register(Picture)
 admin.site.register(Products,ProductsAdmin)
 admin.site.register(Category)
 admin.site.register(Attributes)

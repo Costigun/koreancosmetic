@@ -1,0 +1,10 @@
+{% block subject %}My subject for {{user}}{% endblock %}
+{% block plain %}
+  Hi {{user},
+
+  You just signed up for my website, using:
+      username: {{phone}}
+      join date: {{product}}
+
+  Thanks, you rock!
+{% endblock %}

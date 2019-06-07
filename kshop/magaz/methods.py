@@ -1,14 +1,22 @@
-from django.core.mail import send_mail
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import get_template
+
 from kshop import settings
 from magaz.models import Order
+from templated_email import send_templated_mail
 
 
-def send_email_gmail(user,product,dostavka,phone,orderid):
+def send_email_gmail(user,product,dostavka,phone,total):
     head = 'Ваш заказ'
-    message = f'Здравствуйте {user},Заказ под номером {orderid}, с наличием товаров {product},  ' \
-              f'на общую стоимость, Также вы заказали бесплатную доставку товара,{dostavka}  ' \
-              f'дальнейшие подробности будут обговорены по телефону который вы указали ниже' \
-              f' {phone}   (адрес, время доставки)'
+    if dostavka == True:
+        dostavka = 'С доставкой на дом'
+    else:
+        dostavka = 'Без доставки'
     sender = str(settings.EMAIL_HOST_USER)
-    sending = send_mail(head, message, sender, [str(user)])
-    return sending == 1
+    with open(settings.BASE_DIR + "/templates/kshop/email_html.txt") as f:
+        read_message = f.read()
+    sending = EmailMultiAlternatives(subject=head,body=read_message,from_email=sender,to=[user,])
+    html_template = get_template("kshop/email_style.html").render()
+    sending.attach_alternative(html_template,"text/html")
+    sending.send()
+

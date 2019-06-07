@@ -37,8 +37,6 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 ALLOWED_HOSTS = ['*']
 
 
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -52,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_extensions',
+    'templated_email',
     'magaz',
     'phonenumber_field',
     'storage',
@@ -107,7 +106,16 @@ DATABASES = {
     }
 }
 
+
 GRAPPELLI_SWITCH_USER = True
+
+TEMPLATED_EMAIL_TEMPLATE_DIR = 'templated_email/' #use '' for top level template dir, ensure there is a trailing slash
+TEMPLATED_EMAIL_FILE_EXTENSION = 'email'
+
+
+
+TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django'
+
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }

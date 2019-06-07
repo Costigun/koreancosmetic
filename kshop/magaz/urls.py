@@ -20,8 +20,8 @@ e_router=ExtendedSimpleRouter()
 router = routers.DefaultRouter()
 router.register(r'available', views.ProductIsAvailable)
 router.register(r'seil', views.ProductSeil)
-router.register(r'product',views.ProductSum)
 router.register(r'brands',views.BrandView)
+router.register(r'ordersum',views.OrderSumView)
 
 
 urlpatterns = [
@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^',include(e_router.urls)),
     url(r'order', OrderAPIView.as_view()),
     url(r'bill', BillAPIView.as_view()),
+    url(r'sum', ProductSum.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

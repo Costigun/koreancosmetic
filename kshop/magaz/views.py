@@ -32,9 +32,14 @@ class ProductFilterView(NestedViewSetMixin,ReadOnlyModelViewSet):
     search_fields = ('name',)
 
 
-class ProductSum(viewsets.ModelViewSet):
-    queryset = Products.objects.all()
-    serializer_class = ProductListSerializer
+class ProductSum(GenericAPIView):
+
+    def get(self,request):
+        id_list = [1,2,3,4,5]
+        queryset = Products.objects.filter(id__in=id_list)
+        serializer = ProductSumSerialzier(queryset, many=True)
+        all_sum = queryset.aggregate(Sum('price'))['price__sum']
+        return Response({'sum': all_sum if all_sum else 0, 'objects': serializer.data})
 
 
 class ProductIsAvailable(ReadOnlyModelViewSet):
@@ -51,34 +56,36 @@ class OrderAPIView(APIView):
 
     def post(self, request):
         try:
-            id = request.data['id']
             product = request.data['product']
             dostavka = request.data['dostavka']
             phone = request.data['phone']
             user = request.data['user']
+            total = request.data['total']
         except KeyError:
             return Response({"Test":"Один или нескоолько полей не заполнены"}, status=status.HTTP_400_BAD_REQUEST)
         order_serializer = OrderSerializer(
             data={
-                'id': id,
                 'product': product,
                 'dostavka': dostavka,
                 'phone': phone,
                 'user': user,
+                'total': total,
             },
             partial=True
         )
         if order_serializer.is_valid():
             order_serializer.save()
             data = {
+                'user': order_serializer.data['user'],
                 'orderid': order_serializer.data['id'],
                 'product': order_serializer.data['product'],
                 'dostavka': order_serializer.data['dostavka'],
                 'phone': order_serializer.data['phone'],
-                'totalsum': order_serializer.data['totalsum']
+                'total': order_serializer.data['total'],
             }
-            send_email_gmail(user=user, product=product, dostavka=dostavka, phone=phone,orderid=id)
-            return Response(data, status=status.HTTP_201_CREATED)
+            send_email_gmail(user=user, product=product, dostavka=dostavka, phone=phone,
+                             total=total)
+            return render(request,"kshop/email_style.html",context=data, status=status.HTTP_201_CREATED)
 
 
 class BillAPIView(generics.ListAPIView):
@@ -89,7 +96,13 @@ class BillAPIView(generics.ListAPIView):
 class BrandView(ReadOnlyModelViewSet):
     queryset = Brands.objects.all()
     serializer_class = BrandListSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
     def list(self, request, *args, **kwargs):
         self.serializer_class = BrandSerializer
         return super( ).list(request, *args, **kwargs)
+
+class OrderSumView(ReadOnlyModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSumSerializer

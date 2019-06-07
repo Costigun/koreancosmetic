@@ -25,4 +25,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^',include('magaz.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^', include('templated_email.urls', namespace='templated_email'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
