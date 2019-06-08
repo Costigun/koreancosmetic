@@ -113,7 +113,7 @@ class Picture(models.Model):
     picture = models.ImageField(upload_to='media/', height_field=None,
                               width_field=None,
                               verbose_name='Изображение',
-                              help_text='Не более 1 мб')
+                              help_text='Не более 1 мб',blank=True)
     image_inline = models.ForeignKey(Products, on_delete=models.CASCADE,related_name='image_inline')
 
     class Meta:
